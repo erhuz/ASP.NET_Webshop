@@ -13,9 +13,5 @@ namespace Webshop.Models
         public int category_id { get; set; }
         public string title { get; set; }
         public string description { get; set; }
-
-        public Product()
-        {
-        }
     }
 }
