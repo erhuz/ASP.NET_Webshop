@@ -7,7 +7,7 @@ using Webshop.Models;
 
 namespace Webshop.Models
 {
-    public class Cart
+    public class Order
     {
         public int Id { get; set; }
         public List<Product> Items { get; set; }
