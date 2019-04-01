@@ -7,46 +7,49 @@ using Webshop.Models;
 
 namespace Webshop.Repositories
 {
-    public class ProductRepository
+    public class CartRepository
     {
-        private readonly string connectionString;
+        private readonly string _connectionString;
 
-        public ProductRepository(string connectionsString)
+        public CartRepository(string connectionsString)
         {
-            this.connectionString = connectionsString;
+            this._connectionString = connectionsString;
         }
 
-        public List<Product> Get()
+        //public Cart Get()
+        //{
+        //    using (var connection = new MySqlConnection(this.connectionString))
+        //    {
+        //        // Return all carts of items
+        //        //return connection.Query<Product>("SELECT * FROM products").ToList();
+        //    }
+        //}
+
+        public Cart Get(int id)
         {
-            using (var connection = new MySqlConnection(this.connectionString))
+            using (var connection = new MySqlConnection(this._connectionString))
             {
-                return connection.Query<Product>("SELECT * FROM products").ToList();
+                
+                // Return a cart with items
+                return connection.QuerySingleOrDefault<Cart>("SELECT * FROM products WHERE id = @id", new {id});
             }
         }
 
-        public Product Get(int id)
+        public void Add(int cartId,int productId)
         {
-            using (var connection = new MySqlConnection(this.connectionString))
+            using (var connection = new MySqlConnection(this._connectionString))
             {
-                return connection.QuerySingleOrDefault<Product>("SELECT * FROM products WHERE id = @id", new {id});
-            }
-        }
-
-        public void Add(Product product)
-        {
-            using (var connection = new MySqlConnection(this.connectionString))
-            {
-                connection.Execute(
-                    "INSERT INTO products (category_id, title, description, price) VALUES(@category_id, @title, @description, @price)",
-                    product);
+                 connection.Execute(
+                    "INSERT INTO cart_rows (product_id, cart_id) VALUES(@product_id, @cart_id)",
+                    new {product_id = productId, cart_id = cartId});
             }
         }
 
         public void Delete(int id)
         {
-            using (var connection = new MySqlConnection(this.connectionString))
+            using (var connection = new MySqlConnection(this._connectionString))
             {
-                connection.Execute("DELETE FROM products WHERE id = @id", new {id});
+                // connection.Execute("DELETE FROM products WHERE id = @id", new {id});
             }
         }
     }
