@@ -27,10 +27,10 @@ namespace Webshop.Services
         public bool Add(Product product)
         {
             if (
-                    product?.category_id == null ||
-                    string.IsNullOrEmpty(product?.title) ||
-                    string.IsNullOrEmpty(product?.description) ||
-                    product?.price == null
+                    product?.CategoryId == null ||
+                    string.IsNullOrEmpty(product?.Title) ||
+                    string.IsNullOrEmpty(product?.Description) ||
+                    product?.Price == null
             ){
                 return false;
             }

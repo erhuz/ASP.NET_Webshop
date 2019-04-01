@@ -27,8 +27,8 @@ namespace Webshop.Services
         public bool Add(Category category)
         {
             if (
-                    string.IsNullOrEmpty(category?.title) ||
-                    string.IsNullOrEmpty(category?.description)
+                    string.IsNullOrEmpty(category?.Title) ||
+                    string.IsNullOrEmpty(category?.Description)
             ){
                 return false;
             }
