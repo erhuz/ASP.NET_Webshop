@@ -29,16 +29,6 @@ namespace Webshop.Repositories
             return cart;
         }
 
-        public int Create()
-        {
-            using (var connection = new MySqlConnection(this._connectionString))
-            {
-                // Insert cart_row to w/ cart.id, if no card.id is provided, create cart and return cart.id
-                connection.Execute("INSERT INTO carts() VALUES ()");
-                return connection.Query<int>("SELECT LAST_INSERT_ID();").FirstOrDefault();
-            }
-        }
-
         public bool Exists(int? id)
         {
             int? result;
@@ -49,6 +39,16 @@ namespace Webshop.Repositories
             }
 
             return result != null;
+        }
+
+        public int Create()
+        {
+            using (var connection = new MySqlConnection(this._connectionString))
+            {
+                // Insert cart_row to w/ cart.id, if no card.id is provided, create cart and return cart.id
+                connection.Execute("INSERT INTO carts() VALUES ()");
+                return connection.Query<int>("SELECT LAST_INSERT_ID();").FirstOrDefault();
+            }
         }
 
         public void Add(CartItem cartItem)
