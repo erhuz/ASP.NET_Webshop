@@ -67,7 +67,7 @@ namespace Webshop.Repositories
         {
             using (var connection = new MySqlConnection(this._connectionString))
             {
-                connection.Execute("DELETE FROM carts WHERE id=@id", new {id});
+                connection.Execute("DELETE FROM cart_rows WHERE cartId=@id; DELETE FROM carts WHERE id=@id", new {id});
             }
         }
     }
