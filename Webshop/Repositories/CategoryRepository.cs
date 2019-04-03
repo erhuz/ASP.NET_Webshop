@@ -7,7 +7,7 @@ using Webshop.Models;
 
 namespace Webshop.Repositories
 {
-    public class CategoryRepository
+    public class CategoryRepository : ICategoryRepository
     {
         private readonly string _connectionString;
 
