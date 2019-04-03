@@ -8,10 +8,12 @@ namespace Webshop.Services
     public class OrderService
     {
         private readonly OrderRepository _orderRepository;
+        private readonly CartRepository _cartRepository;
 
-        public OrderService(OrderRepository orderRepository)
+        public OrderService(OrderRepository orderRepository, CartRepository cartRepository)
         {
             this._orderRepository = orderRepository;
+            this._cartRepository = cartRepository;
         }
 
         public Order Get(int id)
@@ -21,10 +23,25 @@ namespace Webshop.Services
 
         public bool Add(Order order)
         {
-            
             // Validate order
+            if (order.CartId <= 0)
+            {
+                return false;
+            }
 
+            if (!this._cartRepository.Exists(order.CartId))
+            {
+                return false;
+            }
+
+            Cart orderCart = this._cartRepository.Get(order.CartId);
+            
+            order.Items = orderCart.Items;
+            
             this._orderRepository.Add(order);
+            
+            this._cartRepository.Delete(order.CartId);
+            
             return true;
         }
 

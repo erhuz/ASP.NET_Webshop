@@ -27,7 +27,7 @@ namespace Webshop.Controllers
         public OrdersController(IConfiguration configuration)
         {
             var connectionString = configuration.GetConnectionString("ConnectionString");
-            this._orderService = new OrderService(new OrderRepository(connectionString));
+            this._orderService = new OrderService(new OrderRepository(connectionString), new CartRepository(connectionString));
         }
 
         // GET api/orders/5
