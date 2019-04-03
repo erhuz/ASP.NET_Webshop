@@ -19,44 +19,30 @@ namespace Webshop.Repositories
         public Order Get(int id)
         {
             Order order = new Order();
-            order.Id = id;
             using (var connection = new MySqlConnection(this._connectionString))
             {
-                order.Items = connection.Query<Product>("SELECT p.id, p.categoryId, p.title, p.description, p.price FROM products AS p LEFT JOIN order_rows AS cr ON p.id = cr.productId LEFT JOIN orders AS c ON cr.orderId = c.id WHERE c.id = @id",
+                order = connection.Query<Order>("SELECT * FROM orders WHERE id=@id", new {id}).Single();
+
+                order.Items = connection.Query<Product>("SELECT p.id, p.categoryId, p.title, p.description, p.price FROM products AS p LEFT JOIN order_rows AS orr ON p.id = orr.productId LEFT JOIN orders AS o ON orr.orderId = o.id WHERE o.id = @id",
                     new {id}).ToList();
             }
-            
+
             return order;
-        }
-
-        public int Create()
-        {
-            using (var connection = new MySqlConnection(this._connectionString))
-            {
-                // Insert order_row to w/ order.id, if no card.id is provided, create order and return order.id
-                connection.Execute("INSERT INTO orders() VALUES ()");
-                return connection.Query<int>("SELECT LAST_INSERT_ID();").FirstOrDefault();
-            }
-        }
-
-        public bool Exists(int? id)
-        {
-            int? result;
-            
-            using (var connection = new MySqlConnection(this._connectionString))
-            {
-                result = connection.Query<int?>("SELECT id FROM orders WHERE id = @id", new {id}).FirstOrDefault();
-            }
-
-            return result != null;
         }
 
         public void Add(Order order)
         {
             using (var connection = new MySqlConnection(this._connectionString))
             {
-                connection.Execute("",
+                connection.Execute("INSERT INTO orders(email, firstName, lastName, address) VALUES (@Email, @FirstName, @LastName, @Address)",
                     order);
+                order.Id = connection.Query<int>("SELECT LAST_INSERT_ID();").FirstOrDefault();
+
+                foreach (var product in order.Items)
+                {
+                    connection.Execute("INSERT INTO order_rows(productId, orderid) VALUES (@ProductId, @OrderId)",
+                        new {ProductId = product.Id, OrderId = order.Id});
+                }
             }
         }
 
@@ -64,7 +50,7 @@ namespace Webshop.Repositories
         {
             using (var connection = new MySqlConnection(this._connectionString))
             {
-                connection.Execute("DELETE FROM orders WHERE id=@id", new {id});
+                connection.Execute("DELETE FROM order_rows WHERE orderId=@id; DELETE FROM orders WHERE id=@id", new {id});
             }
         }
     }
