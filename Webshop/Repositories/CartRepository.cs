@@ -16,32 +16,50 @@ namespace Webshop.Repositories
             this._connectionString = connectionsString;
         }
 
-        //public Cart Get()
-        //{
-        //    using (var connection = new MySqlConnection(this.connectionString))
-        //    {
-        //        // Return all carts of items
-        //        //return connection.Query<Product>("SELECT * FROM products").ToList();
-        //    }
-        //}
-
         public Cart Get(int id)
+        {
+            Cart cart = new Cart();
+            cart.Id = id;
+            using (var connection = new MySqlConnection(this._connectionString))
+            {
+                cart.Items = connection.Query<Product>("SELECT p.id, p.categoryId, p.title, p.description, p.price FROM products AS p LEFT JOIN cart_rows AS cr ON p.id = cr.productId LEFT JOIN carts AS c ON cr.cartId = c.id WHERE c.id = @id",
+                    new {id}).ToList();
+            }
+            
+            return cart;
+        }
+
+        public int Create()
         {
             using (var connection = new MySqlConnection(this._connectionString))
             {
-                
-                // Return a cart with items
-                return connection.QuerySingleOrDefault<Cart>("SELECT * FROM products WHERE id = @id", new {id});
+                // Insert cart_row to w/ cart.id, if no card.id is provided, create cart and return cart.id
+                connection.Execute("INSERT INTO carts() VALUES ()");
+                return connection.Query<int>("SELECT LAST_INSERT_ID();").FirstOrDefault();
             }
         }
 
-        public void Add(int cartId,int productId)
+        public bool Exists(int? id)
         {
+            int? result;
+            
             using (var connection = new MySqlConnection(this._connectionString))
             {
-                 connection.Execute(
-                    "INSERT INTO cart_rows (product_id, cart_id) VALUES(@product_id, @cart_id)",
-                    new {product_id = productId, cart_id = cartId});
+                result = connection.Query<int?>("SELECT id FROM carts WHERE id = @id", new {id}).FirstOrDefault();
+            }
+
+            return result != null;
+        }
+
+        public void Add(CartItem cartItem)
+        {
+            int productId = cartItem.ProductId;
+            int? cartId = cartItem.CartId;
+
+            using (var connection = new MySqlConnection(this._connectionString))
+            {
+                connection.Execute("INSERT INTO cart_rows(productId, cartId) VALUES (@productId, @cartId)",
+                    cartItem);
             }
         }
 
@@ -49,7 +67,7 @@ namespace Webshop.Repositories
         {
             using (var connection = new MySqlConnection(this._connectionString))
             {
-                // connection.Execute("DELETE FROM products WHERE id = @id", new {id});
+                connection.Execute("DELETE FROM carts WHERE id=@id", new {id});
             }
         }
     }
