@@ -7,7 +7,7 @@ using Webshop.Models;
 
 namespace Webshop.Repositories
 {
-    public class ProductRepository
+    public class ProductRepository : IProductRepository
     {
         private readonly string _connectionString;
 
