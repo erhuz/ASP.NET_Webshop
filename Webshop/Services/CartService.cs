@@ -19,11 +19,11 @@ namespace Webshop.Services
             return this._cartRepository.Get(id);
         }
 
-        public bool Add(CartItem cartItem)
+        public Cart Add(CartItem cartItem)
         {
             if (cartItem.CartId != null && cartItem.CartId <= 0)
             {
-                return false;
+                return null;
             }
 
             if (cartItem.CartId == null)
@@ -33,11 +33,12 @@ namespace Webshop.Services
 
             if (!this._cartRepository.Exists(cartItem.CartId))
             {
-                return false;
+                return null;
             }
 
             this._cartRepository.Add(cartItem);
-            return true;
+            
+            return this._cartRepository.Get(cartItem.CartId.GetValueOrDefault());
         }
 
         public bool Delete(int id)

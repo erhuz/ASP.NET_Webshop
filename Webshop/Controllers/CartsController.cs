@@ -46,9 +46,11 @@ namespace Webshop.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult Post([FromBody] CartItem cartItem)
         {
-            if(this._cartService.Add(cartItem))
+            var result = this._cartService.Add(cartItem);
+            
+            if(result != null)
             {
-                return Ok();
+                return Ok(result);
             }
             
             return BadRequest();
