@@ -21,17 +21,17 @@ namespace Webshop.Services
             return this._orderRepository.Get(id);
         }
 
-        public bool Add(Order order)
+        public Order Add(Order order)
         {
             // Validate order
             if (order.CartId <= 0)
             {
-                return false;
+                return null;
             }
 
             if (!this._cartRepository.Exists(order.CartId))
             {
-                return false;
+                return null;
             }
 
             Cart orderCart = this._cartRepository.Get(order.CartId);
@@ -42,7 +42,7 @@ namespace Webshop.Services
             
             this._cartRepository.Delete(order.CartId);
             
-            return true;
+            return this._orderRepository.Get(order.Id);
         }
 
         public bool Delete(int id)

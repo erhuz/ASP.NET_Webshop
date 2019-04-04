@@ -46,9 +46,10 @@ namespace Webshop.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult Post([FromBody] Order order)
         {
-            if(this._orderService.Add(order))
+            var result = this._orderService.Add(order);
+            if(result != null)
             {
-                return Ok();
+                return Ok(result);
             }
             
             return BadRequest();
