@@ -21,7 +21,7 @@ namespace Webshop.Repositories
             Order order = new Order();
             using (var connection = new MySqlConnection(this._connectionString))
             {
-                order = connection.Query<Order>("SELECT * FROM orders WHERE id=@id", new {id}).Single();
+                order = connection.Query<Order>("SELECT * FROM orders WHERE id=@id", new {id}).FirstOrDefault();
 
                 order.Items = connection.Query<Product>("SELECT p.id, p.categoryId, p.title, p.description, p.price FROM products AS p LEFT JOIN order_rows AS orr ON p.id = orr.productId LEFT JOIN orders AS o ON orr.orderId = o.id WHERE o.id = @id",
                     new {id}).ToList();
